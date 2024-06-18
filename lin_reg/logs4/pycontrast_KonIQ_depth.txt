@@ -1,0 +1,8 @@
+Namespace(dataset='KonIQ', experiment_name='pycontrast', max_thread_count=10, num_iterations=10, use_parallel=False)
+(10073, 4096) (10073,)
+1 th repeated holdout test
+Namespace(dataset='KonIQ', experiment_name='pycontrast', max_thread_count=10, num_iterations=10, use_parallel=False)
+(10073, 4096) (10073,)
+1 th repeated holdout test
+Split 1: X_train shape: (8058, 0), X_test shape: (2015, 0), y_train shape: (8058,), y_test shape: (2015,)
+Split 1: X_train_reduced shape: (7050, 0), X_validation shape: (1008, 0), y_train_reduced shape: (7050,), y_validation shape: (1008,)

@@ -1,4 +1,5 @@
 from torch.utils.data import Dataset
+import os
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -7,6 +8,9 @@ import pandas as pd
 from PIL import ImageCms
 from skvideo.utils.mscn import gen_gauss_window
 import scipy.ndimage
+import cv2
+import pdb
+
 
 def ResizeCrop(image, sz, div_factor):
     
@@ -109,5 +113,21 @@ class image_data(Dataset):
         label = self.fls.iloc[idx]['labels']
         label = label[1:-1].split(' ')
         label = np.array([t.replace(',','') for t in label]).astype(np.float32)
-        
+
+        depth_map_path = os.path.join('/scratch/09519/vedasam_ch/depth_data', img_name)
+        depth_map_path = os.path.splitext(depth_map_path)[0] + '.npy'
+        depth_map = np.load(depth_map_path)
+        depth_map = np.clip(depth_map, 0, None)
+        # pdb.set_trace()
+        depth_map = cv2.resize(depth_map, (image.size()[1], image.size()[2]), interpolation=cv2.INTER_CUBIC)
+
+        depth_map = torch.from_numpy(depth_map).float() / 14000.0
+        image = torch.cat([image, depth_map.unsqueeze(0)], dim=0)
+
+        depth_map_np = depth_map.cpu().numpy()
+        depth_map_2 = cv2.resize(depth_map_np, (image_2.size()[1], image_2.size()[2]), interpolation=cv2.INTER_CUBIC)
+        depth_map_2 = torch.from_numpy(depth_map_2).float() / 14000.0
+        image_2 = torch.cat([image_2, depth_map_2.unsqueeze(0)], dim=0)
+
+
         return image, image_2, label
