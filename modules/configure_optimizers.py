@@ -38,7 +38,7 @@ def configure_optimizers(args, model, cur_iter=-1):
         raise NotImplementedError
     
     if args.reload:
-        fl = torch.load(args.model_path + 'optimizer.tar')
+        fl = torch.load(args.model_path + 'optimizer_depth.tar')
         optimizer.load_state_dict(fl['optimizer'])
         cur_iter = fl['scheduler']['last_epoch'] - 1
     

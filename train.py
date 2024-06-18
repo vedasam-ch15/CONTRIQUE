@@ -24,20 +24,21 @@ from PIL import ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 torch.multiprocessing.set_sharing_strategy('file_system')
-    
+
 def train(args, train_loader_syn, train_loader_ugc, \
           model, criterion, optimizer, scaler, scheduler = None):
     loss_epoch = 0
     model.train()
-    
+
     for step,((syn_i1, syn_i2, dist_label_syn),(ugc_i1, ugc_i2, _)) in \
     enumerate(zip(train_loader_syn, train_loader_ugc)):
-        
+
+
         #image 1
         syn_i1 = syn_i1.cuda(non_blocking=True)
         ugc_i1 = ugc_i1.cuda(non_blocking=True)
         x_i1 = torch.cat((syn_i1,ugc_i1),dim=0)
-        
+
         #image 2
         syn_i2 = syn_i2.cuda(non_blocking=True)
         ugc_i2 = ugc_i2.cuda(non_blocking=True)
@@ -48,34 +49,34 @@ def train(args, train_loader_syn, train_loader_ugc, \
         dist_label = torch.zeros((2*args.batch_size, \
                                   args.clusters+(args.batch_size*args.nodes)))
         dist_label[:args.batch_size,:args.clusters] = dist_label_syn.clone()
-        
+
         # UGC data - each image is unique class
         dist_label[args.batch_size:,args.clusters + (args.nr*args.batch_size) : \
                        args.clusters + ((args.nr+1)*args.batch_size)] = \
             torch.eye(args.batch_size)
-        
+
         # all local patches inherit class of the orginal image
         dist_label = dist_label.repeat(1, args.num_patches).view(-1, dist_label.shape[1])
         dist_label = dist_label.cuda(non_blocking=True)
-        
+
         with torch.cuda.amp.autocast(enabled=True):
             z_i1, z_i2, z_i1_patch, z_i2_patch, h_i1, h_i2, h_i1_patch, h_i2_patch\
             = model(x_i1, x_i2)
             loss = criterion(z_i1_patch, z_i2_patch, dist_label)
-        
+
         # update model weights
         optimizer.zero_grad()
         scaler.scale(loss).backward()
         scaler.step(optimizer)
         scaler.update()
-        
+
         if scheduler:
             scheduler.step()
-            
+
         if dist.is_available() and dist.is_initialized():
             loss = loss.data.clone()
             dist.all_reduce(loss.div_(dist.get_world_size()))
-        
+
         if args.nr == 0 and step % 5 == 0:
             lr = optimizer.param_groups[0]["lr"]
             print(f"Step [{step}/{args.steps}]\t Loss: {loss.item()}\t LR: {round(lr, 5)}")
@@ -84,22 +85,22 @@ def train(args, train_loader_syn, train_loader_ugc, \
             args.global_step += 1
 
         loss_epoch += loss.item()
-    
+
     return loss_epoch
 
 def main(gpu, args):
     rank = args.nr * args.gpus + gpu
-    
+
     if args.nodes > 1:
-        cur_dir = 'file://' + os.getcwd() + '/sharedfile'
-        dist.init_process_group("nccl", init_method=cur_dir,\
+        # cur_dir = 'file://' + os.getcwd() + '/sharedfile'
+        dist.init_process_group("nccl", init_method='tcp://127.0.0.1:23456',\
                                 rank=rank, timeout = datetime.timedelta(seconds=3600),\
                                 world_size=args.world_size)
         torch.cuda.set_device(gpu)
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    
+
     # loader for synthetic distortions data
     train_dataset_syn = image_data(file_path=args.csv_file_syn,\
                                                 image_size = args.image_size)
@@ -119,7 +120,7 @@ def main(gpu, args):
         num_workers=args.workers,
         sampler=train_sampler_syn,
     )
-    
+
     # loader for authetically distorted data
     train_dataset_ugc = image_data(file_path=args.csv_file_ugc,\
                                                 image_size = args.image_size)
@@ -139,22 +140,22 @@ def main(gpu, args):
         num_workers=args.workers,
         sampler=train_sampler_ugc,
     )
-    
+
     # initialize ResNet
     encoder = get_network(args.network, pretrained=False)
     args.n_features = encoder.fc.in_features  # get dimensions of fc layer
-    
+
     # initialize model
     model = CONTRIQUE_model(args, encoder, args.n_features)
-    
+
     # initialize model
     if args.reload:
         model_fp = os.path.join(
-            args.model_path, "checkpoint_{}.tar".format(args.epoch_num)
+            args.model_path, "checkpoint_depth_20.tar"
         )
         model.load_state_dict(torch.load(model_fp, map_location=args.device.type))
     model = model.to(args.device)
-    
+
     #sgd optmizer
     args.steps = min(len(train_loader_syn),len(train_loader_ugc))
     args.lr_schedule = 'warmup-anneal'
@@ -162,55 +163,55 @@ def main(gpu, args):
     args.weight_decay = 1e-4
     args.iters = args.steps*args.epochs
     optimizer, scheduler = configure_optimizers(args, model, cur_iter=-1)
-    
+
     criterion = NT_Xent(args.batch_size, args.temperature, args.device, args.world_size)
-    
+
     # DDP / DP
     if args.dataparallel:
         model = convert_model(model)
         model = DataParallel(model)
-        
+
     else:
         if args.nodes > 1:
             model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
             model = DDP(model, device_ids=[gpu]);print(rank);dist.barrier()
 
     model = model.to(args.device)
-    
+
     scaler = torch.cuda.amp.GradScaler(enabled=True)
-    
+
 #    writer = None
     if args.nr == 0:
         print('Training Started')
-    
+
     if not os.path.isdir(args.model_path):
         os.mkdir(args.model_path)
-        
+
     epoch_losses = []
     args.global_step = 0
     args.current_epoch = args.start_epoch
     for epoch in range(args.start_epoch, args.epochs):
         start = time.time()
-        
+
         loss_epoch = train(args, train_loader_syn, train_loader_ugc, \
           model, criterion, optimizer, scaler, scheduler)
-        
+
         end = time.time()
         print(np.round(end - start,4))
-        
+
         if args.nr == 0 and epoch % 1 == 0:
             save_model(args, model, optimizer)
             torch.save({'optimizer' : optimizer.state_dict(),
                         'scheduler' : scheduler.state_dict()},\
-                        args.model_path + 'optimizer.tar')
-        
+                        args.model_path + 'optimizer_depth.tar')
+
         if args.nr == 0:
             print(
                 f"Epoch [{epoch}/{args.epochs}]\t Loss: {loss_epoch / args.steps}"
             )
             args.current_epoch += 1
             epoch_losses.append(loss_epoch / args.steps)
-            np.save(args.model_path + 'losses.npy',epoch_losses)
+            np.save(args.model_path + 'losses_depth.npy',epoch_losses)
 
     ## end training
     save_model(args, model, optimizer)
@@ -229,7 +230,7 @@ def parse_args():
                         help = 'image size')
     parser.add_argument('--batch_size', type=int, default = 32, \
                         help = 'number of images in a batch')
-    parser.add_argument('--workers', type = int, default = 4, \
+    parser.add_argument('--workers', type = int, default = 3, \
                         help = 'number of workers')
     parser.add_argument('--opt', type = str, default = 'sgd',\
                         help = 'optimizer type')
@@ -237,7 +238,7 @@ def parse_args():
                         help = 'learning rate')
     parser.add_argument('--network', type = str, default = 'resnet50',\
                         help = 'network architecture')
-    parser.add_argument('--model_path', type = str, default = 'checkpoints/',\
+    parser.add_argument('--model_path', type = str, default = 'checkpoints_backup/',\
                         help = 'folder to save trained models')
     parser.add_argument('--temperature', type = float, default = 0.1,\
                         help = 'temperature parameter')
@@ -260,7 +261,7 @@ def parse_args():
     parser.add_argument('--seed', type = int, default = 10,\
                         help = 'random seed')
     args = parser.parse_args()
-    
+
     args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     args.num_gpus = torch.cuda.device_count()
     args.gpus = 1
@@ -270,7 +271,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    
+
     if args.nodes > 1:
         print(
             f"Training with {args.nodes} nodes, waiting until all nodes join before starting training"
