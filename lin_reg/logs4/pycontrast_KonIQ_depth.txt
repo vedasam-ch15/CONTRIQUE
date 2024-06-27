@@ -6,3 +6,184 @@ Namespace(dataset='KonIQ', experiment_name='pycontrast', max_thread_count=10, nu
 1 th repeated holdout test
 Split 1: X_train shape: (8058, 0), X_test shape: (2015, 0), y_train shape: (8058,), y_test shape: (2015,)
 Split 1: X_train_reduced shape: (7050, 0), X_validation shape: (1008, 0), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+Namespace(dataset='KonIQ', experiment_name='pycontrast', max_thread_count=10, num_iterations=10, use_parallel=False)
+(10073, 4096) (10073,)
+1 th repeated holdout test
+Split 1: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 1: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.17012542798525893
+SRCC_train:  0.9097706453445837
+KRCC_train:  0.7406349633108016
+PLCC_train:  0.9166327176212351
+RMSE_train:  0.47258063701508957
+======================================================
+SRCC_test:  0.8685524378159791
+KRCC_test:  0.6874482731361927
+PLCC_test:  0.8881891347872698
+RMSE_test:  0.5631846220395602
+======================================================
+ -- 114.654944896698 seconds elapsed...
+
+
+2 th repeated holdout test
+Split 2: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 2: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.21544346900318834
+SRCC_train:  0.9024285917167645
+KRCC_train:  0.7302688180661401
+PLCC_train:  0.9110403671391456
+RMSE_train:  0.5087849746468999
+======================================================
+SRCC_test:  0.8832062200609899
+KRCC_test:  0.7039714231939426
+PLCC_test:  0.901120070244994
+RMSE_test:  0.4519376950270766
+======================================================
+ -- 108.28339385986328 seconds elapsed...
+
+
+3 th repeated holdout test
+Split 3: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 3: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.17012542798525893
+SRCC_train:  0.9053722003984139
+KRCC_train:  0.7347519510162508
+PLCC_train:  0.9143884397414783
+RMSE_train:  0.5028968482717053
+======================================================
+SRCC_test:  0.8840861780685698
+KRCC_test:  0.7046089377155577
+PLCC_test:  0.896993900130744
+RMSE_test:  0.5819215750843457
+======================================================
+ -- 108.23624444007874 seconds elapsed...
+
+
+4 th repeated holdout test
+Split 4: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 4: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.13433993325989002
+SRCC_train:  0.9114501013336551
+KRCC_train:  0.7425982117975182
+PLCC_train:  0.9187185573979052
+RMSE_train:  0.4764987578369607
+======================================================
+SRCC_test:  0.8730916390816463
+KRCC_test:  0.6948110601830682
+PLCC_test:  0.8910663224621094
+RMSE_test:  0.5366926821823854
+======================================================
+ -- 108.3056128025055 seconds elapsed...
+
+
+5 th repeated holdout test
+Split 5: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 5: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.10608183551394483
+SRCC_train:  0.9162473406295736
+KRCC_train:  0.750223561625407
+PLCC_train:  0.9224734713845958
+RMSE_train:  0.4936951698105011
+======================================================
+SRCC_test:  0.8757627381279195
+KRCC_test:  0.6951680459291829
+PLCC_test:  0.8892820330444592
+RMSE_test:  0.4981978434124526
+======================================================
+ -- 108.65011548995972 seconds elapsed...
+
+
+6 th repeated holdout test
+Split 6: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 6: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.06614740641230149
+SRCC_train:  0.9205219329778573
+KRCC_train:  0.7567394493955768
+PLCC_train:  0.9264818705888213
+RMSE_train:  0.499400530914939
+======================================================
+SRCC_test:  0.872096366984489
+KRCC_test:  0.6915387507600531
+PLCC_test:  0.8886916423224298
+RMSE_test:  0.5476761863667327
+======================================================
+ -- 108.35315942764282 seconds elapsed...
+
+
+7 th repeated holdout test
+Split 7: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 7: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.10608183551394483
+SRCC_train:  0.913095166506644
+KRCC_train:  0.7456103249310713
+PLCC_train:  0.9209813708409225
+RMSE_train:  0.5048693255609445
+======================================================
+SRCC_test:  0.8805827966625495
+KRCC_test:  0.7017014492377094
+PLCC_test:  0.8913892460402263
+RMSE_test:  0.4834402516148593
+======================================================
+ -- 108.55221009254456 seconds elapsed...
+
+
+8 th repeated holdout test
+Split 8: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 8: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.06614740641230149
+SRCC_train:  0.920780593111757
+KRCC_train:  0.7568449305004388
+PLCC_train:  0.9263903431259429
+RMSE_train:  0.49467018034762245
+======================================================
+SRCC_test:  0.878838709034657
+KRCC_test:  0.6976620188233349
+PLCC_test:  0.8890197899344146
+RMSE_test:  0.5370535693174022
+======================================================
+ -- 108.37804388999939 seconds elapsed...
+
+
+9 th repeated holdout test
+Split 9: X_train shape: (8058, 4096), X_test shape: (2015, 4096), y_train shape: (8058,), y_test shape: (2015,)
+Split 9: X_train_reduced shape: (7050, 4096), X_validation shape: (1008, 4096), y_train_reduced shape: (7050,), y_validation shape: (1008,)
+======================================================
+params:  0.13433993325989002
+SRCC_train:  0.9112619390001921
+KRCC_train:  0.7427129906142469
+PLCC_train:  0.9204255954944321
+RMSE_train:  0.48008812869543316
+======================================================
+SRCC_test:  0.8853583721555817
+KRCC_test:  0.7054650061322729
+PLCC_test:  0.8930992875418529
+RMSE_test:  0.5612098866779065
+======================================================
+ -- 108.32682991027832 seconds elapsed...
+
+
+======================================================
+Average training results among all repeated 80-20 holdouts:
+SRCC Train: 0.9114501013336551 (std: 0.00586292749673158)
+KRCC Train: 0.7427129906142469 (std: 0.008534190407083172)
+PLCC Train: 0.9204255954944321 (std: 0.004878323363232827)
+RMSE Train: 0.49467018034762245 (std: 0.012413335684659056)
+======================================================
+Average testing results among all repeated 80-20 holdouts:
+SRCC Test: 0.878838709034657 (std: 0.00556629578015628)
+KRCC Test: 0.6976620188233349 (std: 0.005964129697625257)
+PLCC Test: 0.8910663224621094 (std: 0.004112640408633957)
+RMSE Test: 0.5370535693174022 (std: 0.040059188102025675)
+
+
+
+best param:  0.13433993325989002
+Overall 981.7848329544067 secs lapsed..

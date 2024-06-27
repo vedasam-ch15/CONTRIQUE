@@ -230,7 +230,7 @@ def parse_args():
                         help = 'image size')
     parser.add_argument('--batch_size', type=int, default = 32, \
                         help = 'number of images in a batch')
-    parser.add_argument('--workers', type = int, default = 3, \
+    parser.add_argument('--workers', type = int, default = 8, \
                         help = 'number of workers')
     parser.add_argument('--opt', type = str, default = 'sgd',\
                         help = 'optimizer type')

@@ -49,7 +49,7 @@ def main(args):
         image_2 = image.resize((sz[0] // 2, sz[1] // 2))
 
         # Load and process depth map
-        depth_map_path = os.path.join('/scratch/09519/vedasam_ch/depth_data_testing/KonIQ', image_file)
+        depth_map_path = os.path.join('/scratch/09519/vedasam_ch/depth_data_testing/SPAQ', image_file)
         depth_map_path = os.path.splitext(depth_map_path)[0] + '.npy'
 
         # Check if depth map path exists
@@ -94,19 +94,19 @@ def load_scores(scores_file):
     with open(scores_file, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            image_file = row['image_name']
+            image_file = row['Image Name']
             scores[image_file] = row
     return scores
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--image_dir', type=str, default='MiDaS/KonIQ/512x384',
+    parser.add_argument('--image_dir', type=str, default='MiDaS/SPAQ/TestImage',
                         help='Directory containing images', metavar='')
-    parser.add_argument('--model_path', type=str, default='checkpoints_backup/checkpoint_depth_25.tar',
+    parser.add_argument('--model_path', type=str, default='checkpoints_backup_19/checkpoint_depth_19.tar',
                         help='Path to trained CONTRIQUE model', metavar='')
-    parser.add_argument('--scores_file', type=str, default='MiDaS/KonIQ/KonIQ_scores.csv',
+    parser.add_argument('--scores_file', type=str, default='MiDaS/SPAQ/SPAQ_scores.csv',
                         help='Path to CSV file containing scores', metavar='')
-    parser.add_argument('--feature_save_path', type=str, default='lin_reg/KonIQ_features_depth.npy',
+    parser.add_argument('--feature_save_path', type=str, default='lin_reg/SPAQ_features_depth.npy',
                         help='Path to save features', metavar='')
     args = parser.parse_args()
     args.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
